@@ -1,11 +1,10 @@
 module Main exposing (..)
 
 import Browser
+import Friend exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-
-import Friend exposing (..)
 
 
 type alias Model =
