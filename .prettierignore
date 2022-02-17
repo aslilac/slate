@@ -1,0 +1,14 @@
+.DS_Store
+.env*
+.idea/
+.vscode/
+build/
+dist/
+elm-stuff/
+node_modules/
+package-lock.json
+Pipfile.lock
+target/
+*.log
+*.pyc
+*.tsbuildinfo

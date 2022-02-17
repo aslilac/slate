@@ -1,0 +1,12 @@
+.DS_Store
+.env*
+.idea/
+.vscode/
+build/
+dist/
+elm-stuff/
+node_modules/
+target/
+*.log
+*.pyc
+*.tsbuildinfo
