@@ -4,19 +4,15 @@ import App.Model exposing (..)
 
 
 type Action
-    = Increment
-    | IncrementBy Int
-    | SayHiTo String
+    = UpdateGuess String
+    | SubmitGuess
 
 
 update : Action -> Model -> Model
 update action model =
     case action of
-        Increment ->
-            { model | count = model.count + 1 }
+        UpdateGuess guess ->
+            { model | pendingGuess = guess }
 
-        IncrementBy delta ->
-            { model | count = model.count + delta }
-
-        SayHiTo name ->
-            { model | friendName = name }
+        SubmitGuess ->
+            { model | guesses = model.pendingGuess :: model.guesses, pendingGuess = "" }
