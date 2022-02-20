@@ -6,10 +6,16 @@ import App.View exposing (..)
 import Browser
 
 
-main : Program () Model Action
+main : Program Flags Model Message
 main =
-    Browser.sandbox
+    Browser.element
         { init = init
         , update = update
         , view = view
+        , subscriptions = subscriptions
         }
+
+
+subscriptions : Model -> Sub Message
+subscriptions _ =
+    Sub.none
