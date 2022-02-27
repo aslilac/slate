@@ -46,7 +46,12 @@ viewGame model =
                         , value model.pendingGuess
                         ]
                         []
-                  , button [ class "rounded border-2 px-4 py-2 disabled:text-gray-400 text-green-500", onClick SubmitGuess, disabled (String.length model.pendingGuess < 5) ] [ text "Guess" ]
+                  , button
+                        [ class "rounded border-2 px-4 py-2 disabled:text-gray-400 text-green-500"
+                        , disabled (String.length model.pendingGuess < 5)
+                        , onClick SubmitGuess
+                        ]
+                        [ text "Guess" ]
                   ]
                 ]
             )
