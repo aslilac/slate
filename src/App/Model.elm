@@ -115,9 +115,7 @@ init flags =
 
         model =
             { answer = answer
-
-            -- , guesses = [ "WORLD", "HAYLI", "HELLO", "ROLES" ]
-            , guesses = [ "WORLD", "FLACK", "TRIES", "HOUND", "SLATE" ]
+            , guesses = []
             , pendingGuess = ""
             }
     in
