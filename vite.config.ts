@@ -3,6 +3,6 @@ import elmPlugin from "vite-plugin-elm";
 
 export default {
 	build: { outDir: "./build/" },
-	publicDir: "./build/public/",
+	publicDir: "./build/",
 	plugins: [elmPlugin()],
 } as UserConfig;
