@@ -40,14 +40,13 @@ viewGame model =
 
                 -- The current guess
                 , [ input
-                        [ class "border-2 focus:border-green-200 rounded"
+                        [ class "rounded border-2 px-4 py-2 focus:border-green-200 "
                         , focus
                         , onInput UpdateGuess
                         , value model.pendingGuess
                         ]
                         []
-                  , button [ onClick SubmitGuess ] [ text "Guess" ]
-                  , p [ class "color-red" ] [ text model.pendingGuess ]
+                  , button [ class "rounded border-2 px-4 py-2 disabled:text-gray-400 text-green-500", onClick SubmitGuess, disabled (String.length model.pendingGuess < 5) ] [ text "Guess" ]
                   ]
                 ]
             )
