@@ -26,9 +26,6 @@ view model =
 viewGame : StrictModel -> Html Message
 viewGame model =
     let
-        _ =
-            Debug.log "The answer is" model.answer
-
         viewGuessBaked =
             viewGuess model.answer
     in
