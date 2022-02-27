@@ -35,7 +35,7 @@ viewGame model =
     div [ class "prose p-5 m-auto" ]
         [ div [ class "flex flex-col grow items-center justify-center gap-2" ]
             (List.concat
-                [ [ h1 [ class "font-hello text-center" ] [ text "Wordle" ]
+                [ [ h1 [ class "font-hello text-center" ] [ text "Slate" ]
                   ]
 
                 -- The grid of guessed words

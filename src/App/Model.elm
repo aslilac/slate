@@ -8,14 +8,19 @@ words : Array String
 words =
     Array.fromList
         [ "aimed"
+        , "alias"
         , "basic"
         , "books"
         , "build"
         , "check"
         , "coins"
+        , "count"
         , "crate"
+        , "cried"
         , "drink"
         , "eight"
+        , "flack"
+        , "flags"
         , "flask"
         , "gleam"
         , "guess"
@@ -30,19 +35,30 @@ words =
         , "model"
         , "moves"
         , "nails"
+        , "nasty"
+        , "novel"
         , "offer"
         , "order"
         , "paint"
         , "panda"
+        , "plant"
         , "point"
         , "print"
+        , "puppy"
+        , "queen"
         , "quiet"
         , "quote"
         , "range"
+        , "roles"
+        , "rolls"
         , "seals"
         , "shade"
+        , "shoes"
+        , "slack"
+        , "space"
         , "stops"
         , "treat"
+        , "tries"
         , "tubes"
         , "under"
         , "vault"
@@ -51,7 +67,9 @@ words =
         , "waste"
         , "wheat"
         , "woods"
+        , "words"
         , "world"
+        , "yield"
         , "young"
         , "zones"
 
@@ -97,7 +115,9 @@ init flags =
 
         model =
             { answer = answer
-            , guesses = [ "WORLD", "HAYLI", "HELLO" ]
+
+            -- , guesses = [ "WORLD", "HAYLI", "HELLO", "ROLES" ]
+            , guesses = [ "WORLD", "FLACK", "TRIES", "HOUND", "SLATE" ]
             , pendingGuess = ""
             }
     in
