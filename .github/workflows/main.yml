@@ -24,6 +24,5 @@ jobs:
 
             - run: npm i
             - run: npx prettier --check .
-              continue-on-error: true
 
             - run: npm run build
