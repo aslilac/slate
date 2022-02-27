@@ -1,7 +1,6 @@
-module App.Model exposing (..)
+module App.Words exposing (words)
 
 import Array exposing (Array)
-import Random
 
 
 words : Array String
@@ -140,49 +139,3 @@ words =
         -- hehe
         , "hayli"
         ]
-
-
-type alias Flags =
-    { dayOfGame : Int
-    }
-
-
-type alias Model =
-    { answer : Maybe String
-    , guesses : List String
-    , pendingGuess : String
-    }
-
-
-type alias StrictModel =
-    { answer : String
-    , guesses : List String
-    , pendingGuess : String
-    }
-
-
-init : Flags -> ( Model, Cmd message )
-init flags =
-    let
-        range =
-            Random.int 0 (Array.length words)
-
-        seed =
-            Random.initialSeed flags.dayOfGame
-
-        ( index, _ ) =
-            Random.step range seed
-
-        answer =
-            Array.get index words
-                |> Maybe.map String.toUpper
-
-        model =
-            { answer = answer
-            , guesses = []
-            , pendingGuess = ""
-            }
-    in
-    ( model
-    , Cmd.none
-    )

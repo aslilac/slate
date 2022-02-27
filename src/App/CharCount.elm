@@ -1,4 +1,4 @@
-module App.CharCount exposing (..)
+module App.CharCount exposing (CharCount, addChar, countChars, initCharCount, numOfChar)
 
 
 countChars : List Char -> CharCount

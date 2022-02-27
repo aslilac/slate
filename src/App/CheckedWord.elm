@@ -1,8 +1,7 @@
-module App.CheckedWord exposing (..)
+module App.CheckedWord exposing (CheckedChar, CheckedWord, MatchLevel(..), checkWord, colorByMatchLevel)
 
-import App.CharCount exposing (..)
+import App.CharCount exposing (CharCount, addChar, countChars, initCharCount, numOfChar)
 import Array exposing (Array)
-import Html.Attributes exposing (checked)
 
 
 type alias CheckedWord =
