@@ -6,6 +6,7 @@ build/
 dist/
 elm-stuff/
 node_modules/
+tailwind-stuff/
 target/
 *.log
 *.pyc
