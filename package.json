@@ -20,10 +20,11 @@
 		"vite-plugin-elm": "^2.5.1"
 	},
 	"scripts": {
-		"build": "vite build",
-		"dev": "concurrently -n vite,tailwind -c magenta,cyan 'vite' 'npm:build:tailwind:watch'",
+		"build": "npm run build:vite && npm run build:tailwind",
 		"build:tailwind": "tailwindcss -i ./tailwind.css -o ./build/public/tailwind.css",
 		"build:tailwind:watch": "tailwindcss -i ./tailwind.css -o ./build/public/tailwind.css --watch",
+		"build:vite": "vite build",
+		"dev": "concurrently -n vite,tailwind -c magenta,cyan 'vite' 'npm:build:tailwind:watch'",
 		"fmt": "prettier --write ."
 	}
 }
