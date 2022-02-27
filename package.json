@@ -1,9 +1,7 @@
 {
 	"name": "slate",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"author": "McKayla Washburn <mckayla@hey.com>",
-	"description": "",
-	"keywords": [],
 	"license": "MIT",
 	"homepage": "https://github.com/aslilac/slate",
 	"repository": "https://github.com/aslilac/slate",
