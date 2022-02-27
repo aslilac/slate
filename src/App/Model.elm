@@ -93,10 +93,11 @@ init flags =
 
         answer =
             Array.get index words
+                |> Maybe.map String.toUpper
 
         model =
             { answer = answer
-            , guesses = []
+            , guesses = [ "WORLD", "HAYLI", "HELLO" ]
             , pendingGuess = ""
             }
     in
