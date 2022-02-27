@@ -5,8 +5,8 @@ import App.Words exposing (words)
 import Array
 import Browser
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html.Attributes exposing (autofocus, class, disabled, type_, value)
+import Html.Events exposing (onInput, onSubmit)
 import Random
 
 
@@ -122,55 +122,63 @@ view model =
 viewGame : StrictModel -> Html Message
 viewGame model =
     div [ class "prose p-5 m-auto" ]
-        [ div [ class "flex flex-col grow items-center justify-center gap-2" ]
-            (List.concat
-                -- App header
-                [ viewHeader
+        [ div [ class "flex flex-col grow items-center justify-center gap-4" ]
+            -- App header
+            [ viewHeader
 
-                -- The grid of guessed words
-                , List.map (viewGuess model.answer) (List.reverse model.guesses)
+            -- The grid of guessed words
+            , viewHistory model
 
-                -- The current guess
-                , viewGuessInput model
-                ]
-            )
+            -- The current guess
+            , viewGuessInput model
+            ]
         ]
 
 
-viewHeader : List (Html msg)
+viewHeader : Html msg
 viewHeader =
-    [ h1 [ class "font-hello text-center" ] [ text "Slate" ]
-    ]
+    h1 [ class "font-hello text-center" ] [ text "Slate" ]
 
 
-viewGuess : String -> String -> Html Message
+viewHistory : StrictModel -> Html msg
+viewHistory model =
+    div [ class "flex flex-col items-center justify-center gap-2" ]
+        (List.map (viewGuess model.answer) (List.reverse model.guesses))
+
+
+viewGuess : String -> String -> Html msg
 viewGuess answer guess =
     div [ class "flex flex-row gap-2 text-5xl" ]
         (List.map viewGuessChar (checkWord answer guess))
 
 
-viewGuessChar : CheckedChar -> Html Message
+viewGuessChar : CheckedChar -> Html msg
 viewGuessChar ( match, char ) =
-    div [ class (String.join " " [ colorByMatchLevel match, "rounded w-16 p-3 text-center" ]) ]
+    let
+        className =
+            colorByMatchLevel match ++ " rounded w-16 p-3 text-center"
+    in
+    div [ class className ]
         [ text (String.fromChar char) ]
 
 
-viewGuessInput : StrictModel -> List (Html Message)
+viewGuessInput : StrictModel -> Html Message
 viewGuessInput model =
-    [ input
-        [ class "rounded border-2 px-4 py-2 focus:border-green-200 "
-        , autofocus True
-        , onInput UpdateGuess
-        , value model.pendingGuess
+    form [ class "flex flex-row gap-2", onSubmit SubmitGuess ]
+        [ input
+            [ class "rounded border-2 px-4 py-2 focus:border-green-200 "
+            , autofocus True
+            , onInput UpdateGuess
+            , value model.pendingGuess
+            ]
+            []
+        , button
+            [ class "rounded border-2 px-4 py-2 disabled:text-gray-400 text-green-500"
+            , disabled (String.length model.pendingGuess < 5)
+            , type_ "submit"
+            ]
+            [ text "Guess" ]
         ]
-        []
-    , button
-        [ class "rounded border-2 px-4 py-2 disabled:text-gray-400 text-green-500"
-        , disabled (String.length model.pendingGuess < 5)
-        , onClick SubmitGuess
-        ]
-        [ text "Guess" ]
-    ]
 
 
 
