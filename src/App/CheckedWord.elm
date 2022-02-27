@@ -34,20 +34,21 @@ checkWord answer guess =
             String.toList guess
 
         -- Check for exact letter matches
-        ( guessExactCharCount, exactCheckedWord ) =
-            chompExact answerCharsArray initCharCount guessChars
+        -- Matched characters must be one-to-one, and exact matches take priority, so we
+        -- find them first
+        ( exactGuessCharCount, exactCheckedWord ) =
+            findExactMatches answerCharsArray initCharCount guessChars
 
-        -- We want to foldl, because intuitively we would expect the guess to be checked
-        -- from left to right as the player. But this does result in our checked word
-        -- being in reverse order, because `::` attaches to the front.
+        -- Now find near matches, taking into account any exact character matches already
+        -- found, so that we don't falsely report any duplicates.
         nearCheckedWord =
-            chompNear answerCharCount guessExactCharCount guessChars
+            findNearMatches answerCharCount exactGuessCharCount guessChars
     in
     mergeExactAndNear ( exactCheckedWord, nearCheckedWord )
 
 
-chompExact : Array Char -> CharCount -> List Char -> ( CharCount, CheckedWord )
-chompExact answerCharsArray guessCharCount guessChars =
+findExactMatches : Array Char -> CharCount -> List Char -> ( CharCount, CheckedWord )
+findExactMatches answerCharsArray guessCharCount guessChars =
     let
         exactCheckedWord =
             List.indexedMap
@@ -79,12 +80,16 @@ chompExact answerCharsArray guessCharCount guessChars =
     ( nextCharCount, exactCheckedWord )
 
 
-chompNear : CharCount -> CharCount -> List Char -> CheckedWord
-chompNear answerCharCount guessCharCount guessChars =
+findNearMatches : CharCount -> CharCount -> List Char -> CheckedWord
+findNearMatches answerCharCount guessCharCount guessChars =
     let
+        -- We want to foldl, because intuitively we would expect the guess to be checked
+        -- from left to right as the player. But this does result in our checked word
+        -- being in reverse order, because `::` attaches to the front.
         ( _, backwardsCheckedWord ) =
             List.foldl (chomp answerCharCount) ( guessCharCount, [] ) guessChars
 
+        -- and so we correct the order here
         checkedWord =
             List.reverse backwardsCheckedWord
     in
