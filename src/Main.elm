@@ -90,8 +90,10 @@ update action model =
                 guesses =
                     if List.member guess model.guesses then
                         model.guesses
+
                     else
                         guess :: model.guesses
+
                 nextState =
                     if Just guess == model.answer then
                         Won
@@ -110,6 +112,7 @@ update action model =
             ( model
             , Cmd.none
             )
+
 
 sanitizeGuess : String -> String
 sanitizeGuess guess =
@@ -195,10 +198,15 @@ viewGameState model =
             viewGuessInput guess
 
         Lost ->
-            div [] [ text "You lost!" ]
+            viewStatusText "Oh heck 😭"
 
         Won ->
-            div [] [ text "You won!" ]
+            viewStatusText "You won! 🥳"
+
+
+viewStatusText : String -> Html Message
+viewStatusText statusText =
+    div [ class "text-xl" ] [ text statusText ]
 
 
 viewGuessInput : String -> Html Message
