@@ -18,20 +18,26 @@ import Random
 type alias Model =
     { answer : Maybe String
     , guesses : List String
-    , pendingGuess : String
+    , state : GameState
     }
 
 
 type alias StrictModel =
     { answer : String
     , guesses : List String
-    , pendingGuess : String
+    , state : GameState
     }
 
 
 type alias Flags =
     { dayOfGame : Int
     }
+
+
+type GameState
+    = PendingGuess String
+    | Lost
+    | Won
 
 
 init : Flags -> ( Model, Cmd message )
@@ -53,7 +59,7 @@ init flags =
         model =
             { answer = answer
             , guesses = []
-            , pendingGuess = ""
+            , state = PendingGuess ""
             }
     in
     ( model
@@ -73,17 +79,37 @@ type Message
 
 update : Message -> Model -> ( Model, Cmd message )
 update action model =
-    case action of
-        UpdateGuess guess ->
-            ( { model | pendingGuess = sanitizeGuess guess }
+    case ( action, model.state ) of
+        ( UpdateGuess guess, _ ) ->
+            ( { model | state = PendingGuess (sanitizeGuess guess) }
             , Cmd.none
             )
 
-        SubmitGuess ->
-            ( { model | guesses = model.pendingGuess :: model.guesses, pendingGuess = "" }
+        ( SubmitGuess, PendingGuess guess ) ->
+            let
+                guesses =
+                    if List.member guess model.guesses then
+                        model.guesses
+                    else
+                        guess :: model.guesses
+                nextState =
+                    if Just guess == model.answer then
+                        Won
+
+                    else if List.length guesses >= 6 then
+                        Lost
+
+                    else
+                        PendingGuess ""
+            in
+            ( { model | guesses = guesses, state = nextState }
             , Cmd.none
             )
 
+        ( _, _ ) ->
+            ( model
+            , Cmd.none
+            )
 
 sanitizeGuess : String -> String
 sanitizeGuess guess =
@@ -112,7 +138,7 @@ view model =
             viewGame
                 { answer = answer
                 , guesses = model.guesses
-                , pendingGuess = model.pendingGuess
+                , state = model.state
                 }
 
         Nothing ->
@@ -130,7 +156,7 @@ viewGame model =
             , viewHistory model
 
             -- The current guess
-            , viewGuessInput model
+            , viewGameState model
             ]
         ]
 
@@ -162,19 +188,32 @@ viewGuessChar ( match, char ) =
         [ text (String.fromChar char) ]
 
 
-viewGuessInput : StrictModel -> Html Message
-viewGuessInput model =
+viewGameState : StrictModel -> Html Message
+viewGameState model =
+    case model.state of
+        PendingGuess guess ->
+            viewGuessInput guess
+
+        Lost ->
+            div [] [ text "You lost!" ]
+
+        Won ->
+            div [] [ text "You won!" ]
+
+
+viewGuessInput : String -> Html Message
+viewGuessInput pendingGuess =
     form [ class "flex flex-row gap-2", onSubmit SubmitGuess ]
         [ input
             [ class "rounded border-2 px-4 py-2 focus:border-green-200 "
             , autofocus True
             , onInput UpdateGuess
-            , value model.pendingGuess
+            , value pendingGuess
             ]
             []
         , button
             [ class "rounded border-2 px-4 py-2 disabled:text-gray-400 text-green-500"
-            , disabled (String.length model.pendingGuess < 5)
+            , disabled (String.length pendingGuess < 5)
             , type_ "submit"
             ]
             [ text "Guess" ]
