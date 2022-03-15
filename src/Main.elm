@@ -244,6 +244,7 @@ viewHints model =
             case model.state of
                 PendingGuess _ ->
                     List.map viewHintChar hints
+
                 _ ->
                     []
     in
