@@ -13,9 +13,9 @@ type alias CheckedChar =
 
 
 type MatchLevel
-    = Exact
+    = None
     | Near
-    | None
+    | Exact
 
 
 checkWord : String -> String -> CheckedWord
@@ -136,11 +136,11 @@ mergeExactAndNear ( exact, near ) =
 colorByMatchLevel : MatchLevel -> String
 colorByMatchLevel match =
     case match of
-        Exact ->
-            "bg-emerald-300"
+        None ->
+            "bg-gray-100"
 
         Near ->
             "bg-amber-200"
 
-        None ->
-            "bg-gray-100"
+        Exact ->
+            "bg-emerald-300"

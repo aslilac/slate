@@ -1,9 +1,11 @@
 module Main exposing (main)
 
 import App.CheckedWord exposing (CheckedChar, checkWord, colorByMatchLevel)
+import App.Hints exposing (Hint, HintLevel(..), Hints, colorByHintLevel, findHints)
 import App.Words exposing (words)
 import Array
 import Browser
+import Dict
 import Html exposing (..)
 import Html.Attributes exposing (autofocus, class, disabled, type_, value)
 import Html.Events exposing (onInput, onSubmit)
@@ -160,6 +162,9 @@ viewGame model =
 
             -- The current guess
             , viewGameState model
+
+            -- Hints
+            , viewHints model
             ]
         ]
 
@@ -226,6 +231,33 @@ viewGuessInput pendingGuess =
             ]
             [ text "Guess" ]
         ]
+
+
+viewHints : StrictModel -> Html msg
+viewHints model =
+    let
+        hints =
+            Dict.toList <| findHints model.answer model.guesses
+
+        -- We only need to show hints if the game is in progress
+        hintsContent =
+            case model.state of
+                PendingGuess _ ->
+                    List.map viewHintChar hints
+                _ ->
+                    []
+    in
+    div [ class "flex flex-row flex-wrap justify-center w-80 gap-3" ]
+        hintsContent
+
+
+viewHintChar : Hint -> Html msg
+viewHintChar ( char, hint ) =
+    let
+        className =
+            colorByHintLevel hint ++ " w-3 text-center"
+    in
+    span [ class className ] [ text (String.fromChar char) ]
 
 
 
