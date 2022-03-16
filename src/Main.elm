@@ -1,7 +1,7 @@
 module Main exposing (main)
 
 import App.CheckedWord exposing (CheckedChar, checkWord, colorByMatchLevel)
-import App.Hints exposing (Hint, HintLevel(..), Hints, colorByHintLevel, findHints)
+import App.Hints exposing (Hint, HintLevel(..), colorByHintLevel, findHints)
 import App.Words exposing (words)
 import Array
 import Browser
@@ -262,7 +262,7 @@ viewHintChar ( char, hint ) =
 
 
 
----------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 -- Program -------------------------------------------------------------------------------
 
 
