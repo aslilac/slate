@@ -171,7 +171,7 @@ viewGame model =
 
 viewHeader : Html msg
 viewHeader =
-    h1 [ class "font-hello text-center" ] [ text "Slate" ]
+    h1 [ class "font-slate text-center" ] [ text "Slate" ]
 
 
 viewHistory : StrictModel -> Html msg

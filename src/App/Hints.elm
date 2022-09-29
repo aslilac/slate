@@ -107,7 +107,7 @@ colorByHintLevel match =
             "text-gray-300"
 
         Present ->
-            "text-amber-500 font-semibold"
+            "text-amber-500"
 
         Found ->
-            "text-emerald-500 font-semibold"
+            "text-emerald-500"

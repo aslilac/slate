@@ -1,6 +1,6 @@
 # Slate
 
-![Screenshot](./media/slate.png)
+![A screenshot of the game being played, where the first guess is "tries", the second guess is "plant", and the final correct guess is "slate"](https://cdn.mckayla.cloud/-/8b065c3491ad49cba9f5f3b49cf1877f/slate.webp)
 
 Hayleigh said she'd learn Rust if I learned Elm, so here I am, learning Elm!
 
