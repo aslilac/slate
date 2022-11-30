@@ -7,7 +7,6 @@ elm-stuff/
 node_modules/
 package-lock.json
 Pipfile.lock
-tailwind-stuff/
 target/
 *.log
 *.pyc

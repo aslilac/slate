@@ -7,22 +7,19 @@
 	"repository": "https://github.com/aslilac/slate",
 	"bugs": "https://github.com/aslilac/slate/issues",
 	"devDependencies": {
-		"@mckayla/prettier": "^1.0.1",
-		"@tailwindcss/typography": "^0.5.2",
-		"concurrently": "^7.0.0",
-		"elm": "^0.19.1-5",
-		"prettier": "^2.5.1",
-		"prettier-plugin-elm": "^0.8.0",
-		"tailwindcss": "^3.0.23",
-		"vite": "^2.8.3",
-		"vite-plugin-elm": "^2.5.1"
+		"@mckayla/prettier": "^1.0.3",
+		"@tailwindcss/typography": "^0.5.8",
+		"concurrently": "^7.6.0",
+		"elm": "0.19.1-5",
+		"prettier": "~2.8.0",
+		"prettier-plugin-elm": "~0.9.0",
+		"tailwindcss": "^3.2.4",
+		"vite": "^3.2.4",
+		"vite-plugin-elm": "^2.7.2"
 	},
 	"scripts": {
-		"build": "npm run build:tailwind && npm run build:vite",
-		"build:tailwind": "tailwindcss -i ./tailwind.css -o ./tailwind-stuff/tailwind.css",
-		"build:tailwind:watch": "tailwindcss -i ./tailwind.css -o ./tailwind-stuff/tailwind.css --watch",
-		"build:vite": "vite build",
-		"dev": "concurrently -n vite,tailwind -c magenta,cyan 'vite' 'npm:build:tailwind:watch'",
+		"build": "vite build",
+		"dev": "vite",
 		"fmt": "prettier --write ."
 	}
 }

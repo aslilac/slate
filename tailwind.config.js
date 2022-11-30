@@ -1,5 +1,5 @@
 module.exports = {
-	content: ["./src/**/*.elm"],
+	content: ["./**/*.elm"],
 	plugins: [require("@tailwindcss/typography")],
 	theme: {
 		fontFamily: {

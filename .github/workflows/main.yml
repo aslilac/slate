@@ -1,28 +1,40 @@
 name: main
 
 on:
-    push:
-        branches: [main]
-    pull_request:
-        branches: [main]
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["**"]
+
+concurrency:
+  group: main-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-        strategy:
-            matrix:
-                node-version: [14.x, 16.x]
+    steps:
+      - uses: actions/checkout@v3
 
-        steps:
-            - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
 
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node-version }}
+      - run: echo "::set-output name=location::$(npm config get cache)"
+        id: npm-cache
+        shell: bash
 
-            - run: npm i
-            - run: npx prettier --check .
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.npm-cache.outputs.location }}
+          key: build-npm-${{ hashFiles('./package-lock.json') }}
+          restore-keys: build-npm-
 
-            - run: npm run build
+      - run: |
+          npm install
+          git diff --exit-code
+
+      - run: npx prettier --check .
+
+      - run: npm run build
