@@ -1,0 +1,15 @@
+@font-face {
+	font-family: "Cormorant";
+	font-style: normal;
+	src: url("https://fonts.mckayla.cloud/Cormorant.woff2") format(woff2);
+}
+
+@font-face {
+	font-family: "Outfit";
+	font-style: normal;
+	src: url("https://fonts.mckayla.cloud/Outfit.woff2") format(woff2);
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

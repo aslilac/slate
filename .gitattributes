@@ -1,2 +1,2 @@
 *.config.js  -linguist-detectable
-tailwind.css  -linguist-detectable
+*.config.ts  -linguist-detectable

@@ -6,8 +6,5 @@ dist/
 elm-stuff/
 node_modules/
 package-lock.json
-Pipfile.lock
-target/
 *.log
-*.pyc
 *.tsbuildinfo

@@ -101,13 +101,13 @@ colorByHintLevel : HintLevel -> String
 colorByHintLevel match =
     case match of
         Unknown ->
-            "text-gray-600"
+            "bg-gray-100 text-gray-600"
 
         Missing ->
-            "text-gray-300"
+            "bg-gray-50 text-gray-300"
 
         Present ->
-            "text-amber-500"
+            "bg-amber-100 text-amber-500"
 
         Found ->
-            "text-emerald-500"
+            "bg-emerald-100 text-emerald-500"

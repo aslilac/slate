@@ -1,4 +1,4 @@
-import { Elm } from "./src/Main.elm";
+import { Elm } from "./Main.elm";
 
 const DAY = 1000 * 60 * 60 * 24;
 const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000;
