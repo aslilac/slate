@@ -369,7 +369,7 @@ viewKeyboardBackspaceButton =
         [ class "flex rounded items-center justify-center bg-gray-100 p-2 w-12"
         , onClick BackspaceGuess
         ]
-        [ img [ class "w-5 h-5", src "/delete.svg" ] [] ]
+        [ img [ class "w-5 h-5", src "delete.svg" ] [] ]
 
 
 

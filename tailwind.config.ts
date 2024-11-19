@@ -1,7 +1,7 @@
 import Typography from "@tailwindcss/typography";
 
 export default {
-	content: ["./**/*.elm"],
+	content: ["./src/**/*.elm"],
 	plugins: [Typography],
 	theme: {
 		fontFamily: {
