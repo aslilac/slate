@@ -8,8 +8,8 @@ import Browser.Events exposing (onKeyDown)
 import Data.Words exposing (words)
 import Dict
 import Html exposing (..)
-import Html.Attributes exposing (autofocus, class, disabled, src, type_, value)
-import Html.Events exposing (onClick, onInput, onSubmit)
+import Html.Attributes exposing (class, disabled, src, type_)
+import Html.Events exposing (onClick, onMouseDown)
 import Json.Decode as Decode
 import Random
 
@@ -358,7 +358,7 @@ viewKeyboardButton hints char =
     in
     button
         [ class <| color ++ " rounded bg-gray-100 px-2 py-3 w-8 text-center"
-        , onClick <| AppendGuess char
+        , onMouseDown <| AppendGuess char
         ]
         [ text <| String.fromChar char ]
 
@@ -367,7 +367,7 @@ viewKeyboardBackspaceButton : Html Message
 viewKeyboardBackspaceButton =
     button
         [ class "flex rounded items-center justify-center bg-gray-100 p-2 w-12"
-        , onClick BackspaceGuess
+        , onMouseDown BackspaceGuess
         ]
         [ img [ class "w-5 h-5", src "delete.svg" ] [] ]
 

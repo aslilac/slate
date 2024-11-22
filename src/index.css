@@ -10,6 +10,11 @@
 	src: url("https://fonts.mckayla.cloud/Outfit.woff2") format(woff2);
 }
 
+html,
+body {
+	overscroll-behavior: none;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
