@@ -1,8 +1,9 @@
 import ElmPlugin from "vite-plugin-elm";
+import TailwindPlugin from "@tailwindcss/vite";
 
 export default {
 	root: "src/",
-	plugins: [ElmPlugin()],
+	plugins: [ElmPlugin(), TailwindPlugin()],
 	base: "./",
 	build: {
 		emptyOutDir: true,

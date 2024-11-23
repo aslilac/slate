@@ -178,7 +178,7 @@ view model =
 
 viewHeader : Html msg
 viewHeader =
-    h1 [ class "text-2xl font-title text-center border-b border-gray-200 shadow-sm p-2" ]
+    h1 [ class "text-2xl font-title text-center border-b border-gray-200 shadow-xs p-2" ]
         [ text "Slate" ]
 
 
@@ -243,7 +243,7 @@ viewPlaceholderChar : Html msg
 viewPlaceholderChar =
     -- The -my-px subtracts a little bit of margin to account for the height
     -- that the border adds.
-    span [ class "border -my-px inline-block rounded w-14 p-3 text-center text-transparent select-none" ]
+    span [ class "border -my-px inline-block rounded-sm w-14 p-3 text-center text-transparent select-none" ]
         [ text "•" ]
 
 
@@ -251,7 +251,7 @@ viewGuessChar2 : Char -> Html msg
 viewGuessChar2 char =
     -- The -my-px subtracts a little bit of margin to account for the height
     -- that the border adds.
-    span [ class "border -my-px text-gray-600 inline-block rounded w-14 p-3 text-center" ]
+    span [ class "border -my-px text-gray-600 inline-block rounded-sm w-14 p-3 text-center" ]
         [ text (String.fromChar char) ]
 
 
@@ -259,7 +259,7 @@ viewGuessChar : CheckedChar -> Html msg
 viewGuessChar ( match, char ) =
     let
         className =
-            colorByMatchLevel match ++ " inline-block rounded w-14 p-3 text-center"
+            colorByMatchLevel match ++ " inline-block rounded-sm w-14 p-3 text-center"
     in
     span [ class className ]
         [ text (String.fromChar char) ]
@@ -336,7 +336,7 @@ viewKeyboard game =
                 ]
         , div [ class "pt-3" ]
             [ button
-                [ class "rounded border px-4 py-2 disabled:text-gray-300 text-gray-800 uppercase tracking-widest text-center w-96"
+                [ class "rounded-sm border px-4 py-2 disabled:text-gray-300 text-gray-800 uppercase tracking-widest text-center w-96"
                 , disabled <| not <| canSubmitGuess game
                 , type_ "buttom"
                 , onClick SubmitGuess
@@ -357,7 +357,7 @@ viewKeyboardButton hints char =
             colorByHintLevel hint
     in
     button
-        [ class <| color ++ " rounded bg-gray-100 px-2 py-3 w-8 text-center"
+        [ class <| color ++ " rounded-sm bg-gray-100 px-2 py-3 w-8 text-center"
         , onMouseDown <| AppendGuess char
         ]
         [ text <| String.fromChar char ]
@@ -366,7 +366,7 @@ viewKeyboardButton hints char =
 viewKeyboardBackspaceButton : Html Message
 viewKeyboardBackspaceButton =
     button
-        [ class "flex rounded items-center justify-center bg-gray-100 p-2 w-12"
+        [ class "flex rounded-sm items-center justify-center bg-gray-100 p-2 w-12"
         , onMouseDown BackspaceGuess
         ]
         [ img [ class "w-5 h-5", src "delete.svg" ] [] ]
