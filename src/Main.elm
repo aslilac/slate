@@ -4,7 +4,7 @@ import App.Hints as Hints exposing (Hint(..), Hints)
 import App.MatchedWord exposing (..)
 import Browser
 import Browser.Events
-import Data.Words exposing (words)
+import Data.Words as Words
 import Dict
 import Html exposing (..)
 import Html.Attributes exposing (class, disabled, src, type_)
@@ -58,13 +58,13 @@ init : Flags -> ( Model, Cmd message )
 init flags =
     let
         range =
-            Random.int 0 (List.length words)
+            Random.int 0 (List.length Words.answers)
 
         ( index, _ ) =
             Random.initialSeed flags.dayOfGame |> Random.step range
 
         answer =
-            words
+            Words.answers
                 |> List.drop index
                 |> List.head
     in
@@ -129,7 +129,7 @@ updateGame action game =
             else if List.member guess game.guesses then
                 { game | status = PendingGuess "", problem = Just Duplicate }
 
-            else if not <| List.member guess words then
+            else if not <| List.member guess Words.valid then
                 { game | problem = Just UnknownWord }
 
             else
@@ -355,7 +355,7 @@ viewKeyboard hints =
         , div [ class "pt-3" ]
             [ button
                 [ class "rounded-sm border px-4 py-2 disabled:text-gray-300 text-gray-800 uppercase tracking-widest text-center w-96"
-                , type_ "buttom"
+                , type_ "button"
                 , onClick SubmitGuess
                 ]
                 [ text "Guess" ]
