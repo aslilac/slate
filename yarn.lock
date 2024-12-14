@@ -353,7 +353,7 @@
     lodash.merge "^4.6.2"
     postcss-selector-parser "6.0.10"
 
-"@tailwindcss/vite@^4.0.0-beta.7":
+"@tailwindcss/vite@4.0.0-beta.7":
   version "4.0.0-beta.7"
   resolved "https://registry.yarnpkg.com/@tailwindcss/vite/-/vite-4.0.0-beta.7.tgz#08723dc730361a9ce94c54d9443be307856fa85e"
   integrity sha512-F0il5CoWBlwLt6m1zefQzt2ZzTQizOA3SpMcblPp26HHUxDoGxOafKyzuzgldDBNU37rFpRq6UvdKseA3Re62Q==
@@ -525,7 +525,7 @@ elm-solve-deps-wasm@^1.0.2:
   resolved "https://registry.yarnpkg.com/elm-solve-deps-wasm/-/elm-solve-deps-wasm-1.0.2.tgz#cabd3cadf344295944b8d046a857b6ee05e12aaf"
   integrity sha512-qnwo7RO9IO7jd9SLHvIy0rSOEIlc/tNMTE9Cras0kl+b161PVidW4FvXo0MtXU8GAKi/2s/HYvhcnpR/NNQ1zw==
 
-elm-test@^0.19.1-revision12:
+elm-test@0.19.1-revision12:
   version "0.19.1-revision12"
   resolved "https://registry.yarnpkg.com/elm-test/-/elm-test-0.19.1-revision12.tgz#8932cf58b388cff8d23c7cf2b80adc66249aa797"
   integrity sha512-5GV3WkJ8R/faOP1hwElQdNuCt8tKx2+1lsMrdeIYWSFz01Kp9gJl/R6zGtp4QUyrUtO8KnHsxjHrQNUf2CHkrg==
@@ -1124,7 +1124,7 @@ supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
-tailwindcss@4.0.0-beta.7, tailwindcss@^4.0.0-beta.7:
+tailwindcss@4.0.0-beta.7:
   version "4.0.0-beta.7"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-4.0.0-beta.7.tgz#2cb30cac6f2d489dd55e37d4c86801d1161a0f8e"
   integrity sha512-9JXrCC5UVt2bjV9lrjO+B7MPY+bgpWCf5sPbu+Ih5rGvGE6STwA94N6Ah1xMa0Avzp48fB/S1l0vByTp2HEzAw==

@@ -14446,6 +14446,7 @@ valid =
     , "zippo"
     , "zippy"
     , "zitty"
+    , "zonal"
     , "zoned"
     , "zoner"
     , "zones"
