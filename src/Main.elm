@@ -1,10 +1,10 @@
 module Main exposing (main)
 
-import App.CheckedWord exposing (CheckedChar, checkWord, colorByMatchLevel)
+import App.CheckedWord exposing (..)
 import App.Hints exposing (Hint, HintLevel(..), Hints, colorByHintLevel, findHints)
 import Array
 import Browser
-import Browser.Events exposing (onKeyDown)
+import Browser.Events
 import Data.Words exposing (words)
 import Dict
 import Html exposing (..)
@@ -36,6 +36,7 @@ type alias Game =
     { answer : String
     , guesses : List String
     , status : Status
+    , problem : Maybe Problem
     }
 
 
@@ -45,14 +46,9 @@ type Status
     | Won
 
 
-canSubmitGuess : Game -> Bool
-canSubmitGuess game =
-    case game.status of
-        PendingGuess guess ->
-            String.length guess == 5
-
-        _ ->
-            False
+type Problem
+    = Duplicate
+    | UnknownWord
 
 
 {-| Using the date flag passed to us from JavaScript, we pick the word of the
@@ -83,6 +79,7 @@ initGame answer =
     { answer = answer
     , guesses = []
     , status = PendingGuess ""
+    , problem = Nothing
     }
 
 
@@ -93,7 +90,6 @@ initGame answer =
 
 type Message
     = Ignore
-    | ReplaceGuess String
     | AppendGuess Char
     | BackspaceGuess
     | SubmitGuess
@@ -109,9 +105,6 @@ update action model =
 updateGame : Message -> Game -> Game
 updateGame action game =
     case ( action, game.status ) of
-        ( ReplaceGuess guess, _ ) ->
-            { game | status = PendingGuess <| sanitizeGuess guess }
-
         ( AppendGuess it, PendingGuess guess ) ->
             { game | status = PendingGuess <| sanitizeGuess (guess ++ String.fromChar it) }
 
@@ -127,7 +120,7 @@ updateGame action game =
                     else
                         guess :: game.guesses
 
-                nextState =
+                status =
                     if guess == game.answer then
                         Won
 
@@ -137,12 +130,7 @@ updateGame action game =
                     else
                         PendingGuess ""
             in
-            case canSubmitGuess game of
-                True ->
-                    { game | guesses = guesses, status = nextState }
-
-                False ->
-                    game
+            { game | guesses = guesses, status = status }
 
         _ ->
             game
@@ -207,29 +195,47 @@ viewGuessGrid game =
     div [ class "flex flex-col items-center justify-center gap-2 text-4xl" ] <|
         List.concat
             [ List.map (viewPreviousGuess game.answer) (List.reverse game.guesses)
-            , [ viewCurrentGuess game ]
-            , viewPlaceholders <| remainingGuesses
+            , [ viewGuess game ]
+            , viewPlaceholders remainingGuesses
             ]
 
 
 viewPreviousGuess : String -> String -> Html msg
 viewPreviousGuess answer guess =
     div [ class "flex flex-row gap-2" ] <|
-        List.map viewGuessChar (checkWord answer guess)
+        List.map viewPreviousGuessChar (checkWord answer guess)
 
 
-viewCurrentGuess : Game -> Html msg
-viewCurrentGuess game =
+viewPreviousGuessChar : CheckedChar -> Html msg
+viewPreviousGuessChar ( match, char ) =
+    let
+        className =
+            colorByMatchLevel match ++ " inline-block rounded-sm w-14 p-3 text-center"
+    in
+    span [ class className ]
+        [ text (String.fromChar char) ]
+
+
+viewGuess : Game -> Html msg
+viewGuess game =
     case game.status of
         PendingGuess guess ->
             div [ class "flex flex-row gap-2" ] <|
                 List.concat
-                    [ List.map viewGuessChar2 (String.toList guess)
+                    [ List.map viewGuessChar (String.toList guess)
                     , List.repeat (5 - String.length guess) viewPlaceholderChar
                     ]
 
         _ ->
             text ""
+
+
+viewGuessChar : Char -> Html msg
+viewGuessChar char =
+    -- The -my-px subtracts a little bit of margin to account for the height
+    -- that the border adds.
+    span [ class "border -my-px text-gray-600 inline-block rounded-sm w-14 p-3 text-center" ]
+        [ text (String.fromChar char) ]
 
 
 viewPlaceholders : Int -> List (Html msg)
@@ -247,69 +253,22 @@ viewPlaceholderChar =
         [ text "•" ]
 
 
-viewGuessChar2 : Char -> Html msg
-viewGuessChar2 char =
-    -- The -my-px subtracts a little bit of margin to account for the height
-    -- that the border adds.
-    span [ class "border -my-px text-gray-600 inline-block rounded-sm w-14 p-3 text-center" ]
-        [ text (String.fromChar char) ]
-
-
-viewGuessChar : CheckedChar -> Html msg
-viewGuessChar ( match, char ) =
-    let
-        className =
-            colorByMatchLevel match ++ " inline-block rounded-sm w-14 p-3 text-center"
-    in
-    span [ class className ]
-        [ text (String.fromChar char) ]
-
-
 viewControls : Game -> Html Message
 viewControls game =
     case game.status of
-        PendingGuess guess ->
-            viewKeyboard game
+        Won ->
+            viewStatus <| text "You won! 🥳"
 
         Lost ->
             viewStatus <| text game.answer
 
-        Won ->
-            viewStatus <| text "You won! 🥳"
+        PendingGuess guess ->
+            viewKeyboard game
 
 
 viewStatus : Html msg -> Html msg
 viewStatus status =
     div [ class "text-xl" ] [ status ]
-
-
-viewHints : Game -> Html msg
-viewHints game =
-    let
-        hints =
-            Dict.toList <| findHints game.answer game.guesses
-
-        -- We only need to show hints if the game is in progress
-        hintsContent =
-            case game.status of
-                PendingGuess _ ->
-                    List.map viewHintChar hints
-
-                _ ->
-                    []
-    in
-    div [ class "flex flex-row flex-wrap justify-center w-80 gap-3" ]
-        hintsContent
-
-
-viewHintChar : Hint -> Html msg
-viewHintChar ( char, hint ) =
-    let
-        color =
-            colorByHintLevel hint
-    in
-    span [ class <| color ++ " w-3 text-center" ]
-        [ text (String.fromChar char) ]
 
 
 viewKeyboard : Game -> Html Message
@@ -337,7 +296,6 @@ viewKeyboard game =
         , div [ class "pt-3" ]
             [ button
                 [ class "rounded-sm border px-4 py-2 disabled:text-gray-300 text-gray-800 uppercase tracking-widest text-center w-96"
-                , disabled <| not <| canSubmitGuess game
                 , type_ "buttom"
                 , onClick SubmitGuess
                 ]
@@ -381,7 +339,7 @@ viewKeyboardBackspaceButton =
 
 subscriptions : a -> Sub Message
 subscriptions _ =
-    onKeyDown decodeKeyDown
+    Browser.Events.onKeyDown decodeKeyDown
 
 
 decodeKeyDown : Decode.Decoder Message

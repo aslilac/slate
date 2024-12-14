@@ -5,6 +5,6 @@ build/
 dist/
 elm-stuff/
 node_modules/
-package-lock.json
+*.html
 *.log
 *.tsbuildinfo
