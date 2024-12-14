@@ -9,7 +9,7 @@ import Data.Words exposing (words)
 import Dict
 import Html exposing (..)
 import Html.Attributes exposing (class, disabled, src, type_)
-import Html.Events exposing (onClick, onMouseDown)
+import Html.Events exposing (onClick, onMouseDown, preventDefaultOn)
 import Json.Decode as Decode
 import Random
 
@@ -359,6 +359,7 @@ viewKeyboardButton hints char =
     button
         [ class <| color ++ " rounded-sm bg-gray-100 px-2 py-3 w-8 text-center"
         , onMouseDown <| AppendGuess char
+        , preventDefaultOn "touchstart" <| Decode.succeed ( AppendGuess char, True )
         ]
         [ text <| String.fromChar char ]
 
@@ -368,6 +369,7 @@ viewKeyboardBackspaceButton =
     button
         [ class "flex rounded-sm items-center justify-center bg-gray-100 p-2 w-12"
         , onMouseDown BackspaceGuess
+        , preventDefaultOn "touchstart" <| Decode.succeed ( BackspaceGuess, True )
         ]
         [ img [ class "w-5 h-5", src "delete.svg" ] [] ]
 
