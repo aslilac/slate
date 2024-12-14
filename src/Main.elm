@@ -1,8 +1,7 @@
 module Main exposing (main)
 
-import App.CheckedWord exposing (..)
-import App.Hints exposing (Hint, HintLevel(..), Hints, colorByHintLevel, findHints)
-import Array
+import App.Hints as Hints exposing (Hint(..), Hints)
+import App.MatchedWord exposing (..)
 import Browser
 import Browser.Events
 import Data.Words exposing (words)
@@ -48,6 +47,7 @@ type Status
 
 type Problem
     = Duplicate
+    | TooShort
     | UnknownWord
 
 
@@ -58,14 +58,15 @@ init : Flags -> ( Model, Cmd message )
 init flags =
     let
         range =
-            Random.int 0 (Array.length words)
+            Random.int 0 (List.length words)
 
         ( index, _ ) =
             Random.initialSeed flags.dayOfGame |> Random.step range
 
         answer =
-            Array.get index words
-                |> Maybe.map String.toUpper
+            words
+                |> List.drop index
+                |> List.head
     in
     ( Maybe.map initGame answer
     , Cmd.none
@@ -106,31 +107,47 @@ updateGame : Message -> Game -> Game
 updateGame action game =
     case ( action, game.status ) of
         ( AppendGuess it, PendingGuess guess ) ->
-            { game | status = PendingGuess <| sanitizeGuess (guess ++ String.fromChar it) }
+            if String.length guess >= 5 then
+                game
+
+            else
+                { game
+                    | status = PendingGuess <| sanitizeGuess (guess ++ String.fromChar it)
+                    , problem = Nothing
+                }
 
         ( BackspaceGuess, PendingGuess guess ) ->
-            { game | status = PendingGuess <| String.slice 0 (String.length guess - 1) guess }
+            { game
+                | status = PendingGuess <| String.slice 0 (String.length guess - 1) guess
+                , problem = Nothing
+            }
 
         ( SubmitGuess, PendingGuess guess ) ->
-            let
-                guesses =
-                    if List.member guess game.guesses then
-                        game.guesses
+            if String.length guess /= 5 then
+                { game | problem = Just TooShort }
 
-                    else
+            else if List.member guess game.guesses then
+                { game | status = PendingGuess "", problem = Just Duplicate }
+
+            else if not <| List.member guess words then
+                { game | problem = Just UnknownWord }
+
+            else
+                let
+                    guesses =
                         guess :: game.guesses
 
-                status =
-                    if guess == game.answer then
-                        Won
+                    status =
+                        if guess == game.answer then
+                            Won
 
-                    else if List.length guesses >= 6 then
-                        Lost
+                        else if List.length guesses >= 6 then
+                            Lost
 
-                    else
-                        PendingGuess ""
-            in
-            { game | guesses = guesses, status = status }
+                        else
+                            PendingGuess ""
+                in
+                { game | guesses = guesses, status = status, problem = Nothing }
 
         _ ->
             game
@@ -138,7 +155,10 @@ updateGame action game =
 
 sanitizeGuess : String -> String
 sanitizeGuess guess =
-    String.filter Char.isAlpha guess |> String.slice 0 5 |> String.toUpper
+    guess
+        |> String.filter Char.isAlpha
+        |> String.slice 0 5
+        |> String.toLower
 
 
 
@@ -172,48 +192,73 @@ viewHeader =
 
 viewGame : Game -> Html Message
 viewGame game =
+    let
+        matchedGuesses =
+            game.guesses |> List.reverse |> List.map (matchGuess game.answer)
+    in
     div [ class "flex flex-col gap-4 items-center justify-between" ]
         -- The grid of guessed words
-        [ viewGuessGrid game
+        [ viewGuessGrid game matchedGuesses
+
+        -- Explanation of why a guess was rejected
+        , game.problem
+            |> Maybe.map viewProblem
+            |> Maybe.withDefault (text "")
 
         -- The current guess
-        , viewControls game
+        , viewControls game <| Hints.fromMatchedGuesses matchedGuesses
         ]
 
 
-viewGuessGrid : Game -> Html msg
-viewGuessGrid game =
+viewGuessGrid : Game -> List MatchedWord -> Html msg
+viewGuessGrid game guesses =
     let
         remainingGuesses =
             case game.status of
                 PendingGuess _ ->
-                    5 - List.length game.guesses
+                    5 - List.length guesses
 
                 _ ->
                     0
     in
     div [ class "flex flex-col items-center justify-center gap-2 text-4xl" ] <|
         List.concat
-            [ List.map (viewPreviousGuess game.answer) (List.reverse game.guesses)
+            -- Previous guesses
+            [ List.map viewPreviousGuess guesses
+
+            -- The guess currently being input
             , [ viewGuess game ]
+
+            -- Placeholders for the number of guesses remaining
             , viewPlaceholders remainingGuesses
             ]
 
 
-viewPreviousGuess : String -> String -> Html msg
-viewPreviousGuess answer guess =
+viewPreviousGuess : MatchedWord -> Html msg
+viewPreviousGuess guess =
     div [ class "flex flex-row gap-2" ] <|
-        List.map viewPreviousGuessChar (checkWord answer guess)
+        List.map viewPreviousGuessLetter guess
 
 
-viewPreviousGuessChar : CheckedChar -> Html msg
-viewPreviousGuessChar ( match, char ) =
+viewPreviousGuessLetter : MatchedLetter -> Html msg
+viewPreviousGuessLetter { match, letter } =
     let
+        color =
+            case match of
+                No ->
+                    "bg-gray-100"
+
+                Yellow ->
+                    "bg-amber-200"
+
+                Green ->
+                    "bg-emerald-300"
+
         className =
-            colorByMatchLevel match ++ " inline-block rounded-sm w-14 p-3 text-center"
+            color ++ " inline-block rounded-sm w-14 p-3 text-center uppercase"
     in
     span [ class className ]
-        [ text (String.fromChar char) ]
+        [ text (String.fromChar letter) ]
 
 
 viewGuess : Game -> Html msg
@@ -222,39 +267,57 @@ viewGuess game =
         PendingGuess guess ->
             div [ class "flex flex-row gap-2" ] <|
                 List.concat
-                    [ List.map viewGuessChar (String.toList guess)
-                    , List.repeat (5 - String.length guess) viewPlaceholderChar
+                    [ List.map viewGuessLetter (String.toList guess)
+                    , List.repeat (5 - String.length guess) viewPlaceholderLetter
                     ]
 
         _ ->
             text ""
 
 
-viewGuessChar : Char -> Html msg
-viewGuessChar char =
+viewGuessLetter : Char -> Html msg
+viewGuessLetter letter =
     -- The -my-px subtracts a little bit of margin to account for the height
     -- that the border adds.
-    span [ class "border -my-px text-gray-600 inline-block rounded-sm w-14 p-3 text-center" ]
-        [ text (String.fromChar char) ]
+    span [ class "border -my-px text-gray-600 inline-block rounded-sm w-14 p-3 text-center uppercase" ]
+        [ text (String.fromChar letter) ]
 
 
 viewPlaceholders : Int -> List (Html msg)
 viewPlaceholders i =
     List.repeat i <|
         div [ class "flex flex-row gap-2" ] <|
-            List.repeat 5 viewPlaceholderChar
+            List.repeat 5 viewPlaceholderLetter
 
 
-viewPlaceholderChar : Html msg
-viewPlaceholderChar =
+viewPlaceholderLetter : Html msg
+viewPlaceholderLetter =
     -- The -my-px subtracts a little bit of margin to account for the height
     -- that the border adds.
     span [ class "border -my-px inline-block rounded-sm w-14 p-3 text-center text-transparent select-none" ]
         [ text "•" ]
 
 
-viewControls : Game -> Html Message
-viewControls game =
+viewProblem problem =
+    let
+        description =
+            case problem of
+                Duplicate ->
+                    "You already guessed that"
+
+                TooShort ->
+                    "Guesses must be five letters"
+
+                UnknownWord ->
+                    "I don't recognize that word"
+    in
+    div []
+        [ text description
+        ]
+
+
+viewControls : Game -> Hints -> Html Message
+viewControls game hints =
     case game.status of
         Won ->
             viewStatus <| text "You won! 🥳"
@@ -263,7 +326,7 @@ viewControls game =
             viewStatus <| text game.answer
 
         PendingGuess guess ->
-            viewKeyboard game
+            viewKeyboard <| hints
 
 
 viewStatus : Html msg -> Html msg
@@ -271,26 +334,22 @@ viewStatus status =
     div [ class "text-xl" ] [ status ]
 
 
-viewKeyboard : Game -> Html Message
-viewKeyboard game =
-    let
-        hints =
-            findHints game.answer game.guesses
-    in
+viewKeyboard : Hints -> Html Message
+viewKeyboard hints =
     div [ class "keyboard flex flex-col gap-1 items-center" ]
         [ div [ class "flex gap-1" ] <|
             List.map
                 (viewKeyboardButton hints)
-                [ 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P' ]
+                [ 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p' ]
         , div [ class "flex gap-1" ] <|
             List.map
                 (viewKeyboardButton hints)
-                [ 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L' ]
+                [ 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l' ]
         , div [ class "flex gap-1" ] <|
             List.concat
                 [ List.map
                     (viewKeyboardButton hints)
-                    [ 'Z', 'X', 'C', 'V', 'B', 'N', 'M' ]
+                    [ 'z', 'x', 'c', 'v', 'b', 'n', 'm' ]
                 , [ viewKeyboardBackspaceButton ]
                 ]
         , div [ class "pt-3" ]
@@ -305,21 +364,31 @@ viewKeyboard game =
 
 
 viewKeyboardButton : Hints -> Char -> Html Message
-viewKeyboardButton hints char =
+viewKeyboardButton hints letter =
     let
         hint =
-            Dict.get char hints
-                |> Maybe.withDefault Unknown
+            Hints.get letter hints
 
         color =
-            colorByHintLevel hint
+            case hint of
+                Unknown ->
+                    "bg-gray-100 text-gray-600"
+
+                Missing ->
+                    "bg-gray-50 text-gray-300"
+
+                Present ->
+                    "bg-amber-100 text-amber-500"
+
+                Found ->
+                    "bg-emerald-100 text-emerald-500"
     in
     button
-        [ class <| color ++ " rounded-sm bg-gray-100 px-2 py-3 w-8 text-center"
-        , onMouseDown <| AppendGuess char
-        , preventDefaultOn "touchstart" <| Decode.succeed ( AppendGuess char, True )
+        [ class <| color ++ " rounded-sm bg-gray-100 px-2 py-3 w-8 text-center uppercase"
+        , onMouseDown <| AppendGuess letter
+        , preventDefaultOn "touchstart" <| Decode.succeed ( AppendGuess letter, True )
         ]
-        [ text <| String.fromChar char ]
+        [ text <| String.fromChar letter ]
 
 
 viewKeyboardBackspaceButton : Html Message
@@ -363,8 +432,8 @@ type Key
 keyToMessage : Key -> Message
 keyToMessage key =
     case key of
-        Letter char ->
-            AppendGuess char
+        Letter letter ->
+            AppendGuess letter
 
         Backspace ->
             BackspaceGuess
@@ -398,8 +467,8 @@ decodeKey key =
                         |> Maybe.withDefault False
             in
             case ( uncons, isLetter ) of
-                ( Just ( char, "" ), True ) ->
-                    Letter char
+                ( Just ( letter, "" ), True ) ->
+                    Letter letter
 
                 _ ->
                     Other

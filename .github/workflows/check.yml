@@ -26,4 +26,6 @@ jobs:
 
       - run: yarn exec -- prettier --check .
 
+      - run: yarn test
+
       - run: yarn build
