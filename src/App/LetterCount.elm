@@ -34,6 +34,10 @@ sub letter letterCount =
     mutate (\it -> it - 1) letter letterCount
 
 
+
+--------------------------------------------------------------------------------
+
+
 mutate : (Int -> Int) -> Char -> LetterCount -> LetterCount
 mutate mutation letter letterCount =
     get letter letterCount
