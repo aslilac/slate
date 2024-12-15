@@ -1,6 +1,4 @@
-# Slate
-
-<img width=347 align="center" alt="A screenshot of the game being played, where the first guess is &quot;tries&quot;, the second guess is &quot;plant&quot;, and the final correct guess is &quot;slate&quot;" src="https://cdn.mckayla.cloud/L0cbEF7/slate.webp" />
+<p align="center"><img width=347 alt="A screenshot of the game being played, where the first guess is &quot;tries&quot;, the second guess is &quot;plant&quot;, and the final correct guess is &quot;slate&quot;" src="https://cdn.mckayla.cloud/L0cbEF7/slate.webp" /></p>
 
 ## How to play
 
