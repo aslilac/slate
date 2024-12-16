@@ -1020,7 +1020,6 @@ answers =
     , "junta"
     , "junto"
     , "juror"
-    , "kappa"
     , "karma"
     , "kayak"
     , "kebab"
