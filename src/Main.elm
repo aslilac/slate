@@ -5,9 +5,8 @@ import App.MatchedWord exposing (..)
 import Browser
 import Browser.Events
 import Data.Words as Words
-import Dict
 import Html exposing (..)
-import Html.Attributes exposing (class, disabled, src, type_)
+import Html.Attributes exposing (class, src, type_)
 import Html.Events exposing (onClick, onMouseDown, preventDefaultOn)
 import Json.Decode as Decode
 import Random
@@ -298,6 +297,7 @@ viewPlaceholderLetter =
         [ text "•" ]
 
 
+viewProblem : Problem -> Html msg
 viewProblem problem =
     let
         description =
@@ -325,7 +325,7 @@ viewControls game hints =
         Lost ->
             viewStatus <| text game.answer
 
-        PendingGuess guess ->
+        PendingGuess _ ->
             viewKeyboard <| hints
 
 

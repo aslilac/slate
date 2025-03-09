@@ -4,9 +4,7 @@ module App.Hints exposing (Hint(..), Hints, fromMatchedGuesses, get)
 keyboard hints.
 -}
 
-import App.LetterCount as LetterCount
 import App.MatchedWord exposing (Matched(..), MatchedWord)
-import Array
 import Dict exposing (Dict)
 
 
@@ -26,6 +24,7 @@ fromMatchedGuesses guesses =
         |> List.foldl addMatchedLetter empty
 
 
+addMatchedLetter : { match : Matched, letter : Char } -> Hints -> Dict Char Hint
 addMatchedLetter { match, letter } hints =
     let
         hint =

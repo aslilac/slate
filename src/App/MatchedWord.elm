@@ -5,7 +5,6 @@ green and yellow.
 -}
 
 import App.LetterCount as LetterCount exposing (LetterCount)
-import Array exposing (Array)
 
 
 type alias MatchedWord =
@@ -18,10 +17,11 @@ type alias MatchedLetter =
     }
 
 
+matchGuess : String -> String -> MatchedWord
 matchGuess answer guess =
     List.map2 Tuple.pair (String.toList answer) (String.toList guess)
         |> List.foldr findExact { answerLetters = LetterCount.fromString answer, state = [] }
-        |> (\it -> List.foldl (findNear answer) { it | state = [] } it.state)
+        |> (\it -> List.foldl findNear { it | state = [] } it.state)
         |> finish
 
 
@@ -48,8 +48,8 @@ been matched yet (might already be green), and there is still an available
 letter to match in the answer, then the letter gets marked as yellow,
 subtracting one from the amount of available matches for that letter.
 -}
-findNear : String -> MatchedLetter -> Matching -> Matching
-findNear answer { match, letter } matching =
+findNear : MatchedLetter -> Matching -> Matching
+findNear { match, letter } matching =
     if match == No && LetterCount.get letter matching.answerLetters > 0 then
         addYellow letter matching
 
