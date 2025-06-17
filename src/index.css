@@ -14,8 +14,9 @@ html,
 body {
 	overscroll-behavior: none;
 }
+
 @import "tailwindcss";
-@plugin '@tailwindcss/typography';
+@plugin "@tailwindcss/typography";
 
 @theme {
 	--font-*: initial;
