@@ -48,6 +48,7 @@ type Problem
     = Duplicate
     | TooShort
     | UnknownWord
+    | UnknownAnswer
 
 
 {-| Using the date flag passed to us from JavaScript, we pick the word of the
@@ -122,14 +123,22 @@ updateGame action game =
             }
 
         ( SubmitGuess, PendingGuess guess ) ->
+            -- The guess isn't long enough
             if String.length guess /= 5 then
                 { game | problem = Just TooShort }
+                -- This word has already been guessed
 
             else if List.member guess game.guesses then
                 { game | status = PendingGuess "", problem = Just Duplicate }
+                -- The guess is not a known word
 
             else if not <| List.member guess Words.valid then
                 { game | problem = Just UnknownWord }
+                -- This is the final guess and the word is not an answer
+
+            else if List.length game.guesses >= 5 && (not <| List.member guess Words.answers) then
+                { game | problem = Just UnknownAnswer }
+                -- Register the guess and update the game status accordingly
 
             else
                 let
@@ -148,6 +157,7 @@ updateGame action game =
                 in
                 { game | guesses = guesses, status = status, problem = Nothing }
 
+        -- Don't update once the game has been won or lost
         _ ->
             game
 
@@ -310,6 +320,9 @@ viewProblem problem =
 
                 UnknownWord ->
                     "I don't recognize that word"
+
+                UnknownAnswer ->
+                    "That's a silly final guess"
     in
     div []
         [ text description
