@@ -1,7 +1,7 @@
 {
-	"plugins": ["prettier-plugin-elm"],
 	"proseWrap": "never",
 	"quoteProps": "consistent",
 	"tabWidth": 2,
-	"useTabs": true
+	"useTabs": true,
+	"plugins": ["prettier-plugin-elm"]
 }

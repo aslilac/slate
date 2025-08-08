@@ -11,15 +11,18 @@
 		"@tailwindcss/typography": "^0.5.0",
 		"@tailwindcss/vite": "^4.1.10",
 		"elm": "0.19.1-6",
-		"elm-test": "0.19.1-revision12",
-		"prettier": "~3.5.3",
+		"elm-test": "0.19.1-revision16",
+		"prettier": "~3.6.2",
 		"prettier-plugin-elm": "~0.11.0",
-		"tailwindcss": "^4.1.10",
-		"vite": "^6.0.0",
-		"vite-plugin-elm": "^3.0.0"
+		"prettier-plugin-tailwindcss": "~0.6.14",
+		"tailwindcss": "^4.1.11",
+		"vite": "^7.1.0",
+		"vite-plugin-elm": "^3.0.1"
 	},
 	"scripts": {
 		"build": "vite build",
+		"predeploy": "$npm_package_scripts_build",
+		"deploy": "rsync --delete -havz build/ hemlock.forest:public_html/games/slate",
 		"dev": "vite",
 		"fmt": "prettier --write .",
 		"test": "elm-test"

@@ -195,7 +195,7 @@ view model =
 
 viewHeader : Html msg
 viewHeader =
-    h1 [ class "text-2xl font-title text-center border-b border-gray-200 shadow-xs p-2" ]
+    h1 [ class "text-2xl font-title text-center border-b shadow-xs p-2" ]
         [ text "Slate" ]
 
 
